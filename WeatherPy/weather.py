@@ -1,42 +1,54 @@
+
 # Dependencies and Setup
-import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 import requests
+import json
 import time
-from scipy.stats import linregress
-
+import pandas as pd
+import pprint as pprint
+import pandas.io.json as pd_json
+from weatherdata import weatherData
+from weatherdata import flatten_json
 # Import API key
 from api_keys import weather_api_key
+from pandas.io.json import json_normalize
 
-# Incorporated citipy to determine city based on latitude and longitude
-#from citipy import citipy
 
-# Output File (CSV)
-output_data_file = "output_data/cities.csv"
+d = weatherData
 
-# Range of latitudes and longitudes
-lat_range = (-90, 90)
-lng_range = (-180, 180)
+#get rid of empty cities
+dfiltered = [x for x in d if not len(x)<10]
+cloudiness = []
+for i in range(len(dfiltered)):
+    cloudiness.append((dfiltered[i]["clouds"]['all']))
 
-# List for holding lat_lngs and cities
-lat_lngs = []
-cities = []
+#print(cloudiness)
+dfiltered = pd.DataFrame(dfiltered)
+filtered = pd.DataFrame()
 
-# Create a set of random lat and lng combinations
-lats = np.random.uniform(low=-90.000, high=90.000, size=1500)
-lngs = np.random.uniform(low=-180.000, high=180.000, size=1500)
-lat_lngs = zip(lats, lngs)
+filtered['City'] = dfiltered['name']
+filtered['Date'] = dfiltered['dt']
+filtered['Cloudiness'] = cloudiness
+sys = pd.DataFrame(dfiltered['sys'])
 
-# Identify nearest city for each lat, lng combination
-for lat_lng in lat_lngs:
-    city = citipy.nearest_city(lat_lng[0], lat_lng[1]).city_name
+countries = []
+humidity = []
+for index, row in dfiltered.iterrows():
+    countries.append((row['sys']['country']))
+    humidity.append((row['main']['humidity']))
 
-    # If the city is unique, then add it to a our cities list
-    if city not in cities:
-        cities.append(city)
 
-# Print the city count to confirm sufficient count
-len(cities)
+filtered['Countries'] = countries
+
+'''
+Convert Raw Data to DataFrame
+Export the city data into a .csv.
+Display the DataFrame
+
+
+
+pData.to_csv(r'data.csv', index = None)
+print(pData)
+'''
 
 
