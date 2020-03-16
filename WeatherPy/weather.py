@@ -137,10 +137,11 @@ sws = south['windSpeed'].tolist()
 
 # function that prints a lineplot or scatter plot
 
-#arguments (x axis array [], y axis array[], x axis label string , y label string, title string , 1 to add line )
+#arguments (x axis array [], y axis array[], x axis label string , y label string, title string , 1 to add regression  line )
 
 def linearPlot(xList, yList, xlabel, ylabel, title, lineBool):
     t =""
+    #if we want a regression line add it 
     if lineBool ==1:
         (slope, intercept, rvalue, pvalue, stderr) = linregress(xList, yList)
         print(f"The r-squared is: {rvalue}" " for " + xlabel + " / " + ylabel + "")
